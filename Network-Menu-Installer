@@ -1,7 +1,7 @@
 @echo off
 
 :menu
-echo Network Menu Installer
+echo Network Menu Installer (1.0)
 echo ======================
 echo 1. Install Network Menu
 echo 2. Repair Network Menu
@@ -107,9 +107,12 @@ cls
 echo [+] Downloading Newest Installer...
 powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/Polizei321/autoinstaller/main/Network-Menu-Installer -Outfile NetworkMenuInstaller.bat"
 echo [+] Network Menu Installer was updated to the latest version.
-timeout /T 2 /NOBREAK >nul
-cls
-goto menu
+@echo off
+echo Restarting script...
+timeout /t 2 >nul
+start "" %0
+exit
+
 ) else (
     echo Invalid choice. Please try again.
 )

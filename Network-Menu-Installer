@@ -102,9 +102,14 @@ goto menu
     REM code for repairing everything goes here
     echo Everything repaired successfully.
 ) else if %choice%==9 (
+cls
     echo Checking for updates...
-    REM code for checking for updates goes here
-    echo No updates available.
+echo [+] Downloading Newest Installer...
+powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/Polizei321/autoinstaller/main/Network-Menu-Installer -Outfile NetworkMenuInstaller.bat"
+echo [+] Network Menu Installer was updated to the latest version.
+timeout /T 2 /NOBREAK >nul
+cls
+goto menu
 ) else (
     echo Invalid choice. Please try again.
 )

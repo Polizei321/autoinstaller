@@ -1,0 +1,113 @@
+@echo off
+
+:menu
+echo Network Menu Installer
+echo ======================
+echo 1. Install Network Menu
+echo 2. Repair Network Menu
+echo 3. Delete Network Menu
+echo 4. Check Connection
+echo 5. Close Installer
+echo 6. Install Stand Profile
+echo 7. Install Everything
+echo 8. Repair Everything
+echo 9. Check For Updates
+echo ======================
+set /p choice=Enter your choice (1-9): 
+
+if %choice%==1 (
+    echo Installing Network Menu...
+cls
+echo Installing Network Menu...
+cd %AppData%\Stand\"Lua Scripts"
+echo [+] Downloading Network Menu...
+powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/Polizei321/network-tools/main/NetworkTools -Outfile NetworkMenu.lua"
+echo [+] Network Menu was installed successfully.
+timeout /T 2 /NOBREAK >nul
+cls
+goto menu
+) else if %choice%==2 (
+echo Repairing Network Menu...
+cls
+echo [+] Repairing Network Menu...
+del "%AppData%\Stand\Lua Scripts\NetworkMenu.lua" >nul 2>&1
+timeout /T 2 /NOBREAK >nul
+cd %AppData%\Stand\"Lua Scripts"
+echo [+] Downloading Network Menu...
+powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/Polizei321/network-tools/main/NetworkTools -Outfile NetworkMenu.lua"
+echo [+] Network Menu was installed successfully.
+timeout /T 2 /NOBREAK >nul
+cls
+goto menu
+) else if %choice%==3 (
+echo Deleting Network Menu...
+cls
+echo [-] Deleting Network Menu...
+@echo off
+
+
+:: Check if directory exists
+if not exist "%AppData%\Stand\Lua Scripts" (
+    echo [!] Directory not found.
+    goto menu
+)
+
+:: Delete file
+del "%AppData%\Stand\Lua Scripts\NetworkMenu.lua" >nul 2>&1
+
+:: Check if file was deleted
+if exist "%AppData%\Stand\Lua Scripts\NetworkMenu.lua" (
+    echo [!] File not deleted.
+) else (
+    echo [-] File deleted successfully.
+)
+timeout /T 2 /NOBREAK >nul
+cls
+goto menu
+) else if %choice%==4 (
+cls
+ping 8.8.8.8
+timeout /T 5 /NOBREAK >nul
+cls
+goto menu
+
+) else if %choice%==5 (
+    echo Closing Installer...
+    goto :eof
+) else if %choice%==6 (
+cls
+cd %AppData%\Stand\"Profiles"
+echo [+] Downloading Stand Profile...
+powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/Polizei321/Stand-Profiles/main/StandSetup -Outfile StandSetup.txt"
+echo [+] A Stand Profile was installed successfully.
+timeout /T 3 /NOBREAK >nul
+cls
+goto menu
+) else if %choice%==7 (
+cls
+cd %AppData%\Stand\"Profiles"
+echo [+] Installing Files...
+echo [+] Downloading Stand Profile...
+powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/Polizei321/Stand-Profiles/main/StandSetup -Outfile StandSetup.txt"
+echo [+] A Stand Profile was installed successfully.
+cd %AppData%\Stand\"Lua Scripts"
+echo [+] Downloading Network Menu...
+powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/Polizei321/network-tools/main/NetworkTools -Outfile NetworkMenu.lua"
+echo [+] Network Menu was installed successfully.
+timeout /T 3 /NOBREAK >nul
+cls
+goto menu
+) else if %choice%==8 (
+    echo Repairing everything...
+    REM code for repairing everything goes here
+    echo Everything repaired successfully.
+) else if %choice%==9 (
+    echo Checking for updates...
+    REM code for checking for updates goes here
+    echo No updates available.
+) else (
+    echo Invalid choice. Please try again.
+)
+
+pause
+goto menu

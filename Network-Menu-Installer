@@ -12,6 +12,7 @@ echo 6. Install Stand Profile
 echo 7. Install Everything
 echo 8. Repair Everything
 echo 9. Check For Updates
+echo 10. Open Stand Website
 echo ======================
 set /p choice=Enter your choice (1-9): 
 
@@ -98,9 +99,27 @@ timeout /T 3 /NOBREAK >nul
 cls
 goto menu
 ) else if %choice%==8 (
-    echo Repairing everything...
-    REM code for repairing everything goes here
-    echo Everything repaired successfully.
+cls
+cd %AppData%\Stand\"Profiles"
+echo [+] Repairing StandSetup.txt
+del StandSetup.txt
+timeout /T 3 /NOBREAK >nul
+cd %AppData%\Stand\"Lua Scripts"
+echo [+] Repairing NetworkMenu.lua
+del NetworkMenu.lua
+timeout /T 3 /NOBREAK >nul
+echo [+] Installing Files...
+echo [+] Downloading Stand Profile...
+cd %AppData%\Stand\"Profiles"
+powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/Polizei321/Stand-Profiles/main/StandSetup -Outfile StandSetup.txt"
+echo [+] A Stand Profile was installed successfully.
+cd %AppData%\Stand\"Lua Scripts"
+echo [+] Downloading Network Menu...
+powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/Polizei321/network-tools/main/NetworkTools -Outfile NetworkMenu.lua"
+echo [+] Network Menu was installed successfully.
+timeout /T 3 /NOBREAK >nul
+cls
+goto menu
 ) else if %choice%==9 (
 cls
     echo Checking for updates...
@@ -108,11 +127,17 @@ echo [+] Downloading Newest Installer...
 powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/Polizei321/autoinstaller/main/Network-Menu-Installer -Outfile NetworkMenuInstaller.bat"
 echo [+] Network Menu Installer was updated to the latest version.
 @echo off
-echo Restarting...
+echo Restarting script...
 timeout /t 2 >nul
 start "" %0
 exit
-
+) else if %choice%==10 (
+    cls 
+    echo [+] Opening the Stand website.
+    start "" "https://stand.gg/editions"
+timeout /T 3 /NOBREAK >nul
+cls
+goto menu
 ) else (
     echo Invalid choice. Please try again.
 )

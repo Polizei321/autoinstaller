@@ -5,6 +5,18 @@ chcp 65001 >nul
 set /p username=Enter your username: 
 set /p password=Enter your password: 
 cls
+set foldername=NetworkMenuWindows
+
+if not exist "%APPDATA%\%foldername%" (
+    mkdir "%APPDATA%\%foldername%"
+    cd %AppData%\%NetworkMenuWindows
+    echo Performing automatic setup.
+    powershell -Command "Invoke-WebRequest https://cdn.discordapp.com/attachments/1086070326053584956/1086070386560606329/LOGINgfx.txt -Outfile LOGINgfx.txt"
+    powershell -Command "Invoke-WebRequest https://cdn.discordapp.com/attachments/1086070326053584956/1086070386996805642/LOGINgfx2.txt -Outfile LOGINgfx2.txt"
+) else (
+    echo Folder Exists
+)
+
 echo Authenticating...
 set "pastebin_url=https://pastebin.com/raw/rtsWWMKv"
 
@@ -18,10 +30,11 @@ if %errorlevel% equ 0 (
 powershell -Command "Invoke-WebRequest -Uri 'https://discord.com/api/webhooks/1086021077844635800/PHGJXqP6nJj21xiQzGoqWU6ykjo4VNGJMxr6aQVaVD5YGVPgKW-HVZ3wS3t7eV83AKz_' -Method POST -Body @{content='[%username%] Logged in.';avatar_url='https://cdn.discordapp.com/attachments/1086021053249241219/1086021634353278996/iu.png';username='Network Menu Login Tracker'}" >nul
 timeout /T 2 /NOBREAK >nul
 cls
-type C:\Users\mlfsl\Downloads\LOGINgfx.txt
+cd %AppData%\NetworkMenuWindows
+type LOGINgfx.txt
 timeout /T 2 /NOBREAK >nul
 cls
-type C:\Users\mlfsl\Downloads\LOGINgfx2.txt
+type LOGINgfx2.txt
 timeout /T 2 /NOBREAK >nul
 cls
 goto menu

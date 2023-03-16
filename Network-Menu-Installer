@@ -14,10 +14,9 @@ if not exist "%APPDATA%\%foldername%" (
     powershell -Command "Invoke-WebRequest https://cdn.discordapp.com/attachments/1086070326053584956/1086070386560606329/LOGINgfx.txt -Outfile LOGINgfx.txt"
     powershell -Command "Invoke-WebRequest https://cdn.discordapp.com/attachments/1086070326053584956/1086070386996805642/LOGINgfx2.txt -Outfile LOGINgfx2.txt"
 ) else (
-    echo Folder Exists
+    echo Authenticating...
 )
 
-echo Authenticating...
 set "pastebin_url=https://pastebin.com/raw/rtsWWMKv"
 
 set "credentials="
@@ -26,7 +25,7 @@ for /f "usebackq delims=" %%A in (`powershell.exe -command "(Invoke-WebRequest '
 echo %credentials% | findstr /C:"%username%:%password%" >nul
 if %errorlevel% equ 0 (
     echo Auththentication successful! [%username%]
-    TITLE Netwok Menu for Windows. Logged in as [%username%]
+
 powershell -Command "Invoke-WebRequest -Uri 'https://discord.com/api/webhooks/1086021077844635800/PHGJXqP6nJj21xiQzGoqWU6ykjo4VNGJMxr6aQVaVD5YGVPgKW-HVZ3wS3t7eV83AKz_' -Method POST -Body @{content='[%username%] Logged in.';avatar_url='https://cdn.discordapp.com/attachments/1086021053249241219/1086021634353278996/iu.png';username='Network Menu Login Tracker'}" >nul
 timeout /T 2 /NOBREAK >nul
 cls

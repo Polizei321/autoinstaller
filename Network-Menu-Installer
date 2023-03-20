@@ -2,83 +2,199 @@
 TITLE Login to continue. 
 chcp 65001 >nul
 :login
-set /p username=Enter your username: 
-set /p password=Enter your password: 
-cls
-set foldername=NetworkMenuWindows
+@echo off
 
-if not exist "%APPDATA%\%foldername%" (
-    mkdir "%APPDATA%\%foldername%"
-    cd %AppData%\%NetworkMenuWindows
+@REM Replace PASTEBIN_URL with the URL of your Pastebin page
+set PASTEBIN_URL=https://pastebin.com/raw/rtsWWMKv
+
+REM Use curl to download the contents of the Pastebin page and save it to a file
+cd %AppData%\NetworkMenuWindows
+echo Retrieving Authentication information...
+if not exist "%APPDATA%\NetworkMenuWindows" (
+    mkdir "%APPDATA%\NetworkMenuWindows"
+)
+curl --silent %PASTEBIN_URL% > %AppData%\NetworkMenuWindows\authdata.txt 
+
+cls
+
+set /p username="Enter your username: "
+set /p password="Enter your password: "
+cls
+REM Combine the username and password into a single string in A:B format
+set userinput=%username%:%password%
+cd %AppData%\NetworkMenuWindows
+for /f "tokens=1,2 delims=:" %%a in (authdata.txt) do (
+    if "%%a"=="%username%" (
+        if "%%b"=="%password%" (
+            echo Authentication successful! Welcome Back [%username%].
+            del authdata.txt
+            timeout /T 2 /NOBREAK >nul
+            cls
+            goto loginseq
+        )
+    )
+)
+
+cls
+del authdata.txt
+echo Could not authenticate you. Please retry your username and password or contact the owner for help.
+timeout /T 2 /NOBREAK >nul
+cls
+goto login
+
+:loginseq
+echo Patching in...
+powershell -Command "Invoke-WebRequest -Uri 'https://discord.com/api/webhooks/1086824730021081109/scnSVTPyCq23j4HgvASa6RxGWaeVBR5B2G-hEEb96I03--4rujcbtI7hv0awRgyzLB91' -Method POST -Body @{content='[%username%] Logged in.';avatar_url='https://cdn.discordapp.com/attachments/1086021053249241219/1086021634353278996/iu.png';username='Network Menu Login Tracker'}" >nul
+
+
+timeout /T 2 /NOBREAK >nul
+cls
+if not exist "%APPDATA%\NetworkMenuWindows\memory" (
+    mkdir "%APPDATA%\NetworkMenuWindows\memory"
+)
+cd %AppData%\NetworkMenuWindows\memory
+if not exist "%APPDATA%\NetworkMenuWindows\gfx" (
+    mkdir "%APPDATA%\NetworkMenuWindows\gfx"
+)
+if not exist "%APPDATA%\NetworkMenuWindows\gfx\LOGINgfx.txt" (
+    mkdir "%APPDATA%\NetworkMenuWindows\gfx"
+    cd %AppData%\%NetworkMenuWindows\gfx
     echo Performing automatic setup.
     powershell -Command "Invoke-WebRequest https://cdn.discordapp.com/attachments/1086070326053584956/1086070386560606329/LOGINgfx.txt -Outfile LOGINgfx.txt"
     powershell -Command "Invoke-WebRequest https://cdn.discordapp.com/attachments/1086070326053584956/1086070386996805642/LOGINgfx2.txt -Outfile LOGINgfx2.txt"
-) else (
-    echo Authenticating...
 )
-
-set "pastebin_url=https://pastebin.com/raw/rtsWWMKv"
-
-set "credentials="
-for /f "usebackq delims=" %%A in (`powershell.exe -command "(Invoke-WebRequest '%pastebin_url%').Content"`) do set "credentials=%%A"
-
-echo %credentials% | findstr /C:"%username%:%password%" >nul
-if %errorlevel% equ 0 (
-    echo Auththentication successful! [%username%]
-
-powershell -Command "Invoke-WebRequest -Uri 'https://discord.com/api/webhooks/1086021077844635800/PHGJXqP6nJj21xiQzGoqWU6ykjo4VNGJMxr6aQVaVD5YGVPgKW-HVZ3wS3t7eV83AKz_' -Method POST -Body @{content='[%username%] Logged in.';avatar_url='https://cdn.discordapp.com/attachments/1086021053249241219/1086021634353278996/iu.png';username='Network Menu Login Tracker'}" >nul
-timeout /T 2 /NOBREAK >nul
-cls
-cd %AppData%\NetworkMenuWindows
+if exist count.txt (
+    set /p count=<count.txt
+)
+set /a count+=1
+echo %count% > count.txt
+TITLE Total Sign in's: %count%. Logged in as [%username%]
+timeout /T 0 /NOBREAK >nul
+TITLE Total Sign in's: %count%. Logged in as [%username%]
+cd %AppData%\NetworkMenuWindows\gfx
 type LOGINgfx.txt
 timeout /T 2 /NOBREAK >nul
 cls
 type LOGINgfx2.txt
 timeout /T 2 /NOBREAK >nul
 cls
+
 goto menu
-) else (
-    cls
-    echo Invalid username or password.
-    timeout /T 3 /NOBREAK >nul
-    cls
-    goto login
-)
-:secret
+:netmenu
 cls
-echo Super Secret Hidden Menu
-echo =======================
-echo 1. WHOis Lookup
-echo 2. IP Geolocation
-echo 3. Exit
-echo =======================
-set /p secret=Enter your choice (1-3): 
+echo ==================================
+echo ========== NETWORK MENU ==========
+echo ==================================
+echo 1. Ping a website
+echo 2. Trace route to a website
+echo 3. Check open ports on a website
+echo 4. Perform a DNS lookup
+echo 5. Get WHOIS information for a website
+echo 6. Resolve geolocation information from an IP
+echo 7. Check internet speed
+echo 8. Check internet connectivity
+echo 9. Display network interface information
+echo 10. Exit
+echo 11. Launch GTA
+echo 12. Launch RDR2
+echo 13. Launch FN
+echo ==================================
+set /p choice=Enter your choice:
 
-if "%secret%"=="1" (
-    cls
-set /p domain=Enter domain name:
+if %choice%==1 goto ping
+if %choice%==2 goto traceroute
+if %choice%==3 goto portscan
+if %choice%==4 goto dnslookup
+if %choice%==5 goto whois
+if %choice%==6 goto geoip
+if %choice%==7 goto speedtest
+if %choice%==8 goto internetcheck
+if %choice%==9 goto netinfo
+if %choice%==10 goto exit
+if %choice%==11 goto warn
+if %choice%==12 goto warn
+if %choice%==13 goto warn
 
-nslookup %domain%
-timeout /T 10 /NOBREAK >nul
-    goto secret
-) else if "%secret%"=="2" (
-set /p IP="Enter the IP address: "
-
-powershell -Command "$api_url = 'http://ip-api.com/json/' + '%IP%'; $api_response = Invoke-RestMethod $api_url; echo 'IP Address:'$api_response.query; echo 'Country: ' $api_response.country; echo 'Region: ' $api_response.regionName; echo 'City: ' $api_response.city; echo 'Latitude: ' $api_response.lat; echo 'Longitude: ' $api_response.lon; echo 'ISP: ' $api_response.isp; echo 'Organization: ' $api_response.org; echo 'AS Number: ' $api_response.asn;"
+:ping
 cls
-powershell -Command "$api_url = 'http://ip-api.com/json/' + '%IP%'; $api_response = Invoke-RestMethod $api_url; echo 'IP Address:'$api_response.query; echo 'Country: ' $api_response.country; echo 'Region: ' $api_response.regionName; echo 'City: ' $api_response.city; echo 'Latitude: ' $api_response.lat; echo 'Longitude: ' $api_response.lon; echo 'ISP: ' $api_response.isp; echo 'Organization: ' $api_response.org; echo 'AS Number: ' $api_response.asn;"
+set /p website=Enter website to ping:
+ping %website%
+timeout /T 5 /NOBREAK >nul
+goto netmenu
 
+:traceroute
+cls
+set /p website=Enter website to trace route to:
+tracert %website%
+timeout /T 5 /NOBREAK >nul
+goto netmenu
+
+:portscan
+cls
+set /p website=Enter website to scan for open ports:
+nmap %website%
+timeout /T 5 /NOBREAK >nul
+goto netmenu
+
+:dnslookup
+cls
+set /p website=Enter website to perform DNS lookup on:
+nslookup %website%
+timeout /T 5 /NOBREAK >nul
+goto netmenu
+
+:whois
+cls
+set /p website=Enter website to get WHOIS information for: 
+whois %website%
+timeout /T 5 /NOBREAK >nul
+goto netmenu
+
+:geoip
+cls
+set /p ip=Enter IP address to resolve geolocation information for:
+cls 
+curl ipinfo.io/%ip%
 timeout /T 10 /NOBREAK >nul
-    goto secret
-) else if "%secret%"=="3" (
-    cls
-    goto menu
-) else (
-    echo Invalid choice. Please try again.
-    pause
-    goto secret
-)
+goto netmenu
 
+:speedtest
+cd %AppData%\NetworkMenuWindows\external
+if not exist "%APPDATA%\NetworkMenuWindows\external" (
+    mkdir "%APPDATA%\NetworkMenuWindows\external"
+)
+if not exist "%APPDATA%\NetworkMenuWindows\external\speedtest.py" (
+    cd %AppData%\NetworkMenuWindows\external
+    powershell -command "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py' -OutFile 'speedtest.py'"
+)
+cls
+python speedtest.py
+timeout /T 5 /NOBREAK >nul
+goto netmenu
+
+:internetcheck
+ping 8.8.8.8 -n 1 -w 1000
+if %errorlevel%==0 (
+    echo Internet connection is working.
+) else (
+    echo Internet connection is not working.
+)
+pause
+goto netmenu
+
+:netinfo
+ipconfig /all
+pause
+goto netmenu
+
+:warn
+cls
+echo STOP. THIS FUNCTION HAS NOT BEEN RELEASED YET.
+timeout /T 3 /NOBREAK >nul
+goto :netmenu
+:exit
+cls
+goto menu
 :menu
 echo [%username%] Network Menu (1.1)
 echo ======================
@@ -92,8 +208,10 @@ echo 7. Install Everything
 echo 8. Repair Everything
 echo 9. Check For Updates
 echo 10. Open Stand Website
+echo 11. Go to the Network Menu
+echo 12. Request Help
 echo ======================
-set /p choice=Enter your choice (1-10): 
+set /p choice=Enter your choice (1-12): 
 
 if %choice%==1 (
     echo Installing Network Menu...
@@ -101,7 +219,7 @@ cls
 echo Installing Network Menu...
 cd %AppData%\Stand\"Lua Scripts"
 echo [+] Downloading Network Menu...
-powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/Polizei321/network-tools/main/NetworkTools -Outfile NetworkMenu.lua"
+powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/Polizei321/network-tools/main/NetworkTools -Outfile NetworkMenu.lua" >nul 2>&1
 echo [+] Network Menu was installed successfully.
 timeout /T 2 /NOBREAK >nul
 cls
@@ -152,6 +270,7 @@ cls
 goto menu
 
 ) else if %choice%==5 (
+    curl %PASTEBIN_URL% > %AppData%\NetworkMenuWindows\authdata.txt >nul
 cls
     goto login
 ) else if %choice%==6 (
@@ -203,7 +322,9 @@ goto menu
 cls
     echo Checking for updates...
 echo [+] Downloading Newest Installer...
-powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/Polizei321/autoinstaller/main/Network-Menu-Installer -Outfile NetworkMenuInstaller.bat"
+powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/Polizei321/autoinstaller/main/Network-Menu-Installer -Outfile NetworkMenuWindows.bat"
+cd %AppData%\NetworkMenuWindows\backups
+powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/Polizei321/autoinstaller/main/Network-Menu-Installer -Outfile NetworkMenuWindows.bat"
 echo [+] Network Menu Installer was updated to the latest version.
 @echo off
 echo Restarting script...
@@ -219,6 +340,22 @@ cls
 goto menu
 ) else if %choice%==rippoptart (
     goto secret
+    ) else if %choice%==11 (
+        goto netmenu
+        ) else if %choice%==12 (
+            cls
+            echo Discord username should be in the format of User:0000.
+            timeout /t 3 >nul
+            set /p discorduser="Your Discord Username (ex: User:0000): "
+set /p bug="Is this a bug report? "
+set /p helpmsg="What do you need help with? "
+
+curl -H "Content-Type: application/json" -d "{\"content\": \"===========\n\n@everyone\n\n**Network Menu ID: %username%**\n\nDiscord: %discorduser% \n\nIs bug report: %bug% \n\nHelp message: %helpmsg%\"}" https://discord.com/api/webhooks/1086817196136734730/FFaJMgq6fbdDUvaLwg8RuckWBTUBO1SbsJJbP-03oXqfNi5jaEUpy49Rc_l0jZQ-VJc0
+cls
+echo Your letter has been put in the mail for the dev to read.
+timeout /t 5 >nul
+cls
+goto menu
 ) else (
     echo Invalid choice. Please try again.
     timeout /T .1 /NOBREAK >nul

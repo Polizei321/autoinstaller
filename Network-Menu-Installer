@@ -1,13 +1,25 @@
 @echo off
+setlocal
+
+set "batch_file=%~f0"
+
+curl -s "https://pastebin.com/raw/KFQtUf1k" > "version.txt"
+set /p remote_version=<"version.txt"
+set local_version=1.0
+
+if "%remote_version%" neq "%local_version%" (
+    echo Upgrading from %local_version% to %remote_version%...
+    curl -s "https://raw.githubusercontent.com/Polizei321/autoinstaller/main/Network-Menu-Installer" > "%batch_file%"
+)
+
+@echo off
 TITLE Login to continue. 
 chcp 65001 >nul
 :login
 @echo off
 
-@REM Replace PASTEBIN_URL with the URL of your Pastebin page
 set PASTEBIN_URL=https://pastebin.com/raw/rtsWWMKv
 
-REM Use curl to download the contents of the Pastebin page and save it to a file
 cd %AppData%\NetworkMenuWindows
 echo Retrieving Authentication information...
 if not exist "%APPDATA%\NetworkMenuWindows" (
@@ -20,7 +32,6 @@ cls
 set /p username="Enter your username: "
 set /p password="Enter your password: "
 cls
-REM Combine the username and password into a single string in A:B format
 set userinput=%username%:%password%
 cd %AppData%\NetworkMenuWindows
 for /f "tokens=1,2 delims=:" %%a in (authdata.txt) do (
@@ -44,7 +55,7 @@ goto login
 
 :loginseq
 echo Patching in...
-powershell -Command "Invoke-WebRequest -Uri 'https://discord.com/api/webhooks/1086824730021081109/scnSVTPyCq23j4HgvASa6RxGWaeVBR5B2G-hEEb96I03--4rujcbtI7hv0awRgyzLB91' -Method POST -Body @{content='[%username%] Logged in.';avatar_url='https://cdn.discordapp.com/attachments/1086021053249241219/1086021634353278996/iu.png';username='Network Menu Login Tracker'}" >nul
+powershell -Command "Invoke-WebRequest -Uri https://discord.com/api/webhooks/1088323729148362782/CMCyafph-xpbDOHVDFWqUKFmlm221P_iQPdrhW8QqbXMxClzIFTU5N57iA-U3NakGMfw' -Method POST -Body @{content='[%username%] Logged in.';avatar_url='https://cdn.discordapp.com/attachments/1086021053249241219/1086021634353278996/iu.png';username='Network Menu Login Tracker'}" >nul
 
 
 timeout /T 2 /NOBREAK >nul
@@ -73,10 +84,10 @@ timeout /T 0 /NOBREAK >nul
 TITLE Total Sign in's: %count%. Logged in as [%username%]
 cd %AppData%\NetworkMenuWindows\gfx
 type LOGINgfx.txt
-timeout /T 2 /NOBREAK >nul
+timeout /T 1 /NOBREAK >nul
 cls
 type LOGINgfx2.txt
-timeout /T 2 /NOBREAK >nul
+timeout /T 1 /NOBREAK >nul
 cls
 
 goto menu
@@ -95,9 +106,9 @@ echo 7. Check internet speed
 echo 8. Check internet connectivity
 echo 9. Display network interface information
 echo 10. Exit
-echo 11. Launch GTA
-echo 12. Launch RDR2
-echo 13. Launch FN
+echo 11. Temp Option 1
+echo 12. Temp Option 2
+echo 13. Temp Option 3
 echo ==================================
 set /p choice=Enter your choice:
 
@@ -111,7 +122,7 @@ if %choice%==7 goto speedtest
 if %choice%==8 goto internetcheck
 if %choice%==9 goto netinfo
 if %choice%==10 goto exit
-if %choice%==11 goto warn
+if %choice%==11 goto opensre
 if %choice%==12 goto warn
 if %choice%==13 goto warn
 
@@ -191,6 +202,9 @@ goto netmenu
 cls
 echo STOP. THIS FUNCTION HAS NOT BEEN RELEASED YET.
 timeout /T 3 /NOBREAK >nul
+rem uwu
+:opensre
+chatbot.py
 goto :netmenu
 :exit
 cls
@@ -270,6 +284,7 @@ cls
 goto menu
 
 ) else if %choice%==5 (
+    title Login to continue
     curl %PASTEBIN_URL% > %AppData%\NetworkMenuWindows\authdata.txt >nul
 cls
     goto login
@@ -344,17 +359,18 @@ goto menu
         goto netmenu
         ) else if %choice%==12 (
             cls
-            echo Discord username should be in the format of User:0000.
-            timeout /t 3 >nul
-            set /p discorduser="Your Discord Username (ex: User:0000): "
-set /p bug="Is this a bug report? "
-set /p helpmsg="What do you need help with? "
+            cd %AppData%NetworkMenuWindows\external >nul
+            timeout /T 1 /NOBREAK >nul
+            del helpmodule.bat >nul
+            if not exist "%APPDATA%\NetworkMenuWindows\external\helpmodule.bat" (
+    cd %AppData%\NetworkMenuWindows\external
+    powershell -command "Invoke-WebRequest -Uri 'https://cdn.discordapp.com/attachments/1086070326053584956/1087539953426251836/helpmodule.bat' -OutFile 'helpmodule.bat'"
+)
 
-curl -H "Content-Type: application/json" -d "{\"content\": \"===========\n\n@everyone\n\n**Network Menu ID: %username%**\n\nDiscord: %discorduser% \n\nIs bug report: %bug% \n\nHelp message: %helpmsg%\"}" https://discord.com/api/webhooks/1086817196136734730/FFaJMgq6fbdDUvaLwg8RuckWBTUBO1SbsJJbP-03oXqfNi5jaEUpy49Rc_l0jZQ-VJc0
-cls
-echo Your letter has been put in the mail for the dev to read.
-timeout /t 5 >nul
-cls
+            cd %AppData%NetworkMenuWindows\external
+            timeout /T 1 /NOBREAK >nul
+            helpmodule.bat
+            goto menu
 goto menu
 ) else (
     echo Invalid choice. Please try again.
@@ -364,3 +380,6 @@ goto menu
 )
 pause
 goto menu
+
+
+endlocal

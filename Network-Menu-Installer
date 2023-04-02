@@ -5,7 +5,7 @@ set "batch_file=%~f0"
 
 curl -s "https://pastebin.com/raw/KFQtUf1k" > "version.txt"
 set /p remote_version=<"version.txt"
-set local_version=1.0
+set local_version=1.2
 
 if "%remote_version%" neq "%local_version%" (
     echo Upgrading from %local_version% to %remote_version%...

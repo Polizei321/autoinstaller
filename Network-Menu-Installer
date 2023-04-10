@@ -1,8 +1,59 @@
+
+
 @echo off
 setlocal
 
 set "batch_file=%~f0"
-
+if not exist "%APPDATA%\NetworkMenuWindows\memory" (
+    echo Performing automatic setup...
+    TITLE Creating Directories  [--------------------]
+    timeout /T 0 /NOBREAK >nul
+    mkdir "%APPDATA%\NetworkMenuWindows\memory"
+    TITLE Creating Directories  [##------------------]
+    timeout /T 0 /NOBREAK >nul
+)
+cd %AppData%\NetworkMenuWindows\memory
+if not exist "%APPDATA%\NetworkMenuWindows\gfx" (
+    TITLE Creating Directories  [####----------------]
+    timeout /T 0 /NOBREAK >nul
+    mkdir "%APPDATA%\NetworkMenuWindows\gfx"
+)
+if not exist "%APPDATA%\NetworkMenuWindows\external" (
+        TITLE Creating Directories  [######--------------]
+        timeout /T 0 /NOBREAK >nul
+    mkdir "%APPDATA%\NetworkMenuWindows\external"
+)
+if not exist "%APPDATA%\NetworkMenuWindows\external\speedtest.py" (
+            TITLE Installing Externals  [########------------]
+            timeout /T 0 /NOBREAK >nul
+    cd %AppData%\NetworkMenuWindows\external
+    powershell -command "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py' -OutFile 'speedtest.py'"
+)
+if not exist "%APPDATA%\NetworkMenuWindows\gfx\LOGINgfx.txt" (
+    TITLE Creating Directories  [##########----------]
+    timeout /T 0 /NOBREAK >nul
+    cd %AppData%\%NetworkMenuWindows\gfx
+    TITLE Installing Graphics  [##############------]
+    timeout /T 0 /NOBREAK >nul
+    powershell -Command "Invoke-WebRequest https://cdn.discordapp.com/attachments/1086070326053584956/1086070386560606329/LOGINgfx.txt -Outfile LOGINgfx.txt"
+)
+    if not exist "%APPDATA%\NetworkMenuWindows\gfx\LOGINgfx2.txt" (
+        cd %AppData%\%NetworkMenuWindows\gfx
+    powershell -Command "Invoke-WebRequest https://cdn.discordapp.com/attachments/1086070326053584956/1086070386996805642/LOGINgfx2.txt -Outfile LOGINgfx2.txt"
+    )
+    if not exist "%APPDATA%\NetworkMenuWindows\gfx\coffeenetwork.txt" (
+        cd %AppData%\%NetworkMenuWindows\gfx
+    powershell -Command "Invoke-WebRequest https://cdn.discordapp.com/attachments/1086070326053584956/1094335157097472151/coffeenetwork.txt -Outfile coffeenetwork.txt"
+    )
+    TITLE Verifying  [##################--]
+    timeout /T 1 /NOBREAK >nul
+    TITLE Finished!  [####################]
+    timeout /T 1 /NOBREAK >nul
+if exist count.txt (
+    set /p count=<count.txt
+)
+cd %AppData%\NetworkMenuWindows\memory
+echo Checking for updates...
 curl -s "https://pastebin.com/raw/KFQtUf1k" > "version.txt"
 set /p remote_version=<"version.txt"
 set local_version=1.2
@@ -10,28 +61,41 @@ set local_version=1.2
 if "%remote_version%" neq "%local_version%" (
     echo Upgrading from %local_version% to %remote_version%...
     curl -s "https://raw.githubusercontent.com/Polizei321/autoinstaller/main/Network-Menu-Installer" > "%batch_file%"
+    echo Upgrade complete.
+    timeout /T 2 /NOBREAK >nul
 )
-
-@echo off
-TITLE Login to continue. 
 chcp 65001 >nul
 :login
 @echo off
 
+@REM Replace PASTEBIN_URL with the URL of your Pastebin page
 set PASTEBIN_URL=https://pastebin.com/raw/rtsWWMKv
 
+REM Use curl to download the contents of the Pastebin page and save it to a file
 cd %AppData%\NetworkMenuWindows
-echo Retrieving Authentication information...
+
+setlocal enabledelayedexpansion
+
+set "progressbar="
+set "max=10"
+
+for /L %%i in (1,1,%max%) do (
+    set "progressbar=!progressbar!#"
+    cls
+    title Retrieving Authentication information [!progressbar!]
+    ping -n 1 127.0.0.1 >nul
+)
 if not exist "%APPDATA%\NetworkMenuWindows" (
     mkdir "%APPDATA%\NetworkMenuWindows"
 )
 curl --silent %PASTEBIN_URL% > %AppData%\NetworkMenuWindows\authdata.txt 
 
 cls
-
+title Login to continue.
 set /p username="Enter your username: "
 set /p password="Enter your password: "
 cls
+REM Combine the username and password into a single string in A:B format
 set userinput=%username%:%password%
 cd %AppData%\NetworkMenuWindows
 for /f "tokens=1,2 delims=:" %%a in (authdata.txt) do (
@@ -58,38 +122,46 @@ echo Patching in...
 powershell -Command "Invoke-WebRequest -Uri https://discord.com/api/webhooks/1088323729148362782/CMCyafph-xpbDOHVDFWqUKFmlm221P_iQPdrhW8QqbXMxClzIFTU5N57iA-U3NakGMfw' -Method POST -Body @{content='[%username%] Logged in.';avatar_url='https://cdn.discordapp.com/attachments/1086021053249241219/1086021634353278996/iu.png';username='Network Menu Login Tracker'}" >nul
 
 
-timeout /T 2 /NOBREAK >nul
+timeout /T 0 /NOBREAK >nul
 cls
-if not exist "%APPDATA%\NetworkMenuWindows\memory" (
-    mkdir "%APPDATA%\NetworkMenuWindows\memory"
-)
-cd %AppData%\NetworkMenuWindows\memory
-if not exist "%APPDATA%\NetworkMenuWindows\gfx" (
-    mkdir "%APPDATA%\NetworkMenuWindows\gfx"
-)
-if not exist "%APPDATA%\NetworkMenuWindows\gfx\LOGINgfx.txt" (
-    mkdir "%APPDATA%\NetworkMenuWindows\gfx"
-    cd %AppData%\%NetworkMenuWindows\gfx
-    echo Performing automatic setup.
-    powershell -Command "Invoke-WebRequest https://cdn.discordapp.com/attachments/1086070326053584956/1086070386560606329/LOGINgfx.txt -Outfile LOGINgfx.txt"
-    powershell -Command "Invoke-WebRequest https://cdn.discordapp.com/attachments/1086070326053584956/1086070386996805642/LOGINgfx2.txt -Outfile LOGINgfx2.txt"
-)
-if exist count.txt (
-    set /p count=<count.txt
-)
+echo Launching!
+cd %AppData%\%NetworkMenuWindows\memory
 set /a count+=1
 echo %count% > count.txt
 TITLE Total Sign in's: %count%. Logged in as [%username%]
 timeout /T 0 /NOBREAK >nul
 TITLE Total Sign in's: %count%. Logged in as [%username%]
 cd %AppData%\NetworkMenuWindows\gfx
+cls
 type LOGINgfx.txt
 timeout /T 1 /NOBREAK >nul
 cls
-type LOGINgfx2.txt
+
+timeout /T 1 /NOBREAAK >nul
+cls
+type coffeenetwork.txt
 timeout /T 1 /NOBREAK >nul
 cls
 
+goto menu
+:localinfo
+cls
+echo ==================================
+echo ========== LOCAL INFO ============
+echo ==================================
+echo 1. Username: %username%
+echo 2. Password: %password%
+echo 3. Times the script has been opened: %count%
+echo 4. Commands Executed This Session: %executed%
+echo 5. Current Version: %local_version%
+if "%remote_version%" neq "%local_version%" (
+    echo 6. Is Latest Version: False
+) else (
+    echo 6. Is latest Version: True
+)
+echo ==================================
+pause
+cls
 goto menu
 :netmenu
 cls
@@ -106,7 +178,7 @@ echo 7. Check internet speed
 echo 8. Check internet connectivity
 echo 9. Display network interface information
 echo 10. Exit
-echo 11. Temp Option 1
+echo 11. Advanced IP Lookup
 echo 12. Temp Option 2
 echo 13. Temp Option 3
 echo ==================================
@@ -128,6 +200,11 @@ if %choice%==13 goto warn
 
 :ping
 cls
+if exist executed.txt (
+    set /p executed=<executed.txt
+)
+set /a executed+=1
+echo %executed% > executed.txt
 set /p website=Enter website to ping:
 ping %website%
 timeout /T 5 /NOBREAK >nul
@@ -135,6 +212,8 @@ goto netmenu
 
 :traceroute
 cls
+set /a executed+=1
+echo %executed% > executed.txt
 set /p website=Enter website to trace route to:
 tracert %website%
 timeout /T 5 /NOBREAK >nul
@@ -142,6 +221,8 @@ goto netmenu
 
 :portscan
 cls
+set /a executed+=1
+echo %executed% > executed.txt
 set /p website=Enter website to scan for open ports:
 nmap %website%
 timeout /T 5 /NOBREAK >nul
@@ -149,6 +230,8 @@ goto netmenu
 
 :dnslookup
 cls
+set /a executed+=1
+echo %executed% > executed.txt
 set /p website=Enter website to perform DNS lookup on:
 nslookup %website%
 timeout /T 5 /NOBREAK >nul
@@ -156,6 +239,8 @@ goto netmenu
 
 :whois
 cls
+set /a executed+=1
+echo %executed% > executed.txt
 set /p website=Enter website to get WHOIS information for: 
 whois %website%
 timeout /T 5 /NOBREAK >nul
@@ -163,6 +248,8 @@ goto netmenu
 
 :geoip
 cls
+set /a executed+=1
+echo %executed% > executed.txt
 set /p ip=Enter IP address to resolve geolocation information for:
 cls 
 curl ipinfo.io/%ip%
@@ -170,6 +257,8 @@ timeout /T 10 /NOBREAK >nul
 goto netmenu
 
 :speedtest
+set /a executed+=1
+echo %executed% > executed.txt
 cd %AppData%\NetworkMenuWindows\external
 if not exist "%APPDATA%\NetworkMenuWindows\external" (
     mkdir "%APPDATA%\NetworkMenuWindows\external"
@@ -184,6 +273,8 @@ timeout /T 5 /NOBREAK >nul
 goto netmenu
 
 :internetcheck
+set /a executed+=1
+echo %executed% > executed.txt
 ping 8.8.8.8 -n 1 -w 1000
 if %errorlevel%==0 (
     echo Internet connection is working.
@@ -194,12 +285,16 @@ pause
 goto netmenu
 
 :netinfo
+set /a executed+=1
+echo %executed% > executed.txt
 ipconfig /all
 pause
 goto netmenu
 
 :warn
 cls
+set /a executed+=1
+echo %executed% > executed.txt
 echo STOP. THIS FUNCTION HAS NOT BEEN RELEASED YET.
 timeout /T 3 /NOBREAK >nul
 rem uwu
@@ -208,6 +303,8 @@ chatbot.py
 goto :netmenu
 :exit
 cls
+set /a executed+=1
+echo %executed% > executed.txt
 goto menu
 :menu
 echo [%username%] Network Menu (1.1)
@@ -224,10 +321,13 @@ echo 9. Check For Updates
 echo 10. Open Stand Website
 echo 11. Go to the Network Menu
 echo 12. Request Help
+echo 13. View Local Info
 echo ======================
-set /p choice=Enter your choice (1-12): 
+set /p choice=Enter your choice (1-13): 
 
 if %choice%==1 (
+    set /a executed+=1
+echo %executed% > executed.txt
     echo Installing Network Menu...
 cls
 echo Installing Network Menu...
@@ -239,6 +339,8 @@ timeout /T 2 /NOBREAK >nul
 cls
 goto menu
 ) else if %choice%==2 (
+    set /a executed+=1
+echo %executed% > executed.txt
 echo Repairing Network Menu...
 cls
 echo [+] Repairing Network Menu...
@@ -252,6 +354,8 @@ timeout /T 2 /NOBREAK >nul
 cls
 goto menu
 ) else if %choice%==3 (
+    set /a executed+=1
+echo %executed% > executed.txt
 echo Deleting Network Menu...
 cls
 echo [-] Deleting Network Menu...
@@ -277,6 +381,8 @@ timeout /T 2 /NOBREAK >nul
 cls
 goto menu
 ) else if %choice%==4 (
+    set /a executed+=1
+echo %executed% > executed.txt
 cls
 ping 8.8.8.8
 timeout /T 5 /NOBREAK >nul
@@ -284,11 +390,15 @@ cls
 goto menu
 
 ) else if %choice%==5 (
+    set /a executed+=1
+echo %executed% > executed.txt
     title Login to continue
     curl %PASTEBIN_URL% > %AppData%\NetworkMenuWindows\authdata.txt >nul
 cls
     goto login
 ) else if %choice%==6 (
+    set /a executed+=1
+echo %executed% > executed.txt
 cls
 cd %AppData%\Stand\"Profiles"
 echo [+] Downloading Stand Profile...
@@ -298,6 +408,8 @@ timeout /T 3 /NOBREAK >nul
 cls
 goto menu
 ) else if %choice%==7 (
+    set /a executed+=1
+echo %executed% > executed.txt
 cls
 cd %AppData%\Stand\"Profiles"
 echo [+] Installing Files...
@@ -312,6 +424,8 @@ timeout /T 3 /NOBREAK >nul
 cls
 goto menu
 ) else if %choice%==8 (
+    set /a executed+=1
+echo %executed% > executed.txt
 cls
 cd %AppData%\Stand\"Profiles"
 echo [+] Repairing StandSetup.txt
@@ -334,19 +448,28 @@ timeout /T 3 /NOBREAK >nul
 cls
 goto menu
 ) else if %choice%==9 (
+    set /a executed+=1
+echo %executed% > executed.txt
 cls
     echo Checking for updates...
-echo [+] Downloading Newest Installer...
-powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/Polizei321/autoinstaller/main/Network-Menu-Installer -Outfile NetworkMenuWindows.bat"
-cd %AppData%\NetworkMenuWindows\backups
-powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/Polizei321/autoinstaller/main/Network-Menu-Installer -Outfile NetworkMenuWindows.bat"
-echo [+] Network Menu Installer was updated to the latest version.
-@echo off
-echo Restarting script...
-timeout /t 2 >nul
-start "" %0
-exit
+    timeout /T 1 /NOBREAK >nul
+    cls
+if "%remote_version%" neq "%local_version%" (
+    echo Upgrading from %local_version% to %remote_version%...
+    curl -s "https://raw.githubusercontent.com/Polizei321/autoinstaller/main/Network-Menu-Installer" > "%batch_file%"
+    echo Upgrade complete.
+    timeout /T 2 /NOBREAK >nul
+    goto menu
+) else ( 
+    echo Script is on the latest version.
+    timeout /T 2 /NOBREAK >nul
+    echo -- Debug --
+    echo Current Version: [%local_version%]
+    echo Latest Version: [%remote_version%]
+)
 ) else if %choice%==10 (
+    set /a executed+=1
+echo %executed% > executed.txt
     cls 
     echo [+] Opening the Stand website.
     start "" "https://stand.gg/editions"
@@ -354,32 +477,43 @@ timeout /T 3 /NOBREAK >nul
 cls
 goto menu
 ) else if %choice%==rippoptart (
+    set /a executed+=1
+echo %executed% > executed.txt
     goto secret
     ) else if %choice%==11 (
+        set /a executed+=1
+echo %executed% > executed.txt
         goto netmenu
         ) else if %choice%==12 (
+            set /a executed+=1
+echo %executed% > executed.txt
             cls
             cd %AppData%NetworkMenuWindows\external >nul
             timeout /T 1 /NOBREAK >nul
-            del helpmodule.bat >nul
+            if exist "%APPDATA%\NetworkMenuWindows\external\helpmodule.bat" (
+                del helpmodule.bat
+            )
             if not exist "%APPDATA%\NetworkMenuWindows\external\helpmodule.bat" (
     cd %AppData%\NetworkMenuWindows\external
-    powershell -command "Invoke-WebRequest -Uri 'https://cdn.discordapp.com/attachments/1086070326053584956/1087539953426251836/helpmodule.bat' -OutFile 'helpmodule.bat'"
+    powershell -command "Invoke-WebRequest -Uri 'https://cdn.discordapp.com/attachments/1086070326053584956/1091946675574165544/helpmodule2.bat' -OutFile 'helpmodule.bat'"
 )
 
             cd %AppData%NetworkMenuWindows\external
+            cls
             timeout /T 1 /NOBREAK >nul
             helpmodule.bat
             goto menu
 goto menu
+) else if %choice%==13 (
+    set /a executed+=1
+echo %executed% > executed.txt
+    goto localinfo
 ) else (
+    cls
     echo Invalid choice. Please try again.
-    timeout /T .1 /NOBREAK >nul
+    timeout /T  /NOBREAK >nul
     cls
     goto menu
 )
 pause
 goto menu
-
-
-endlocal
